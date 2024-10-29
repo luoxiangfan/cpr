@@ -77,7 +77,7 @@ const main = async (...args: string[]) => {
       }
     }
   } else if (files.length > 2) {
-    if (isPathExist(destPath) && !isDirectory(destPath)) {
+    if (!isDirectory(destPath)) {
       console.error(`${name}: target '${destPath}' is not a directory`);
       return 1;
     } else {
