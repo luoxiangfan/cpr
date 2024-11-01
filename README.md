@@ -18,7 +18,7 @@ const { cpr } = require('node-cpr')
 
 cpr('example.js', 'dirname')
 
-cpr('soure/dir', 'dest/dir')
+cpr('source/dir', 'dest/dir')
 
 cpr('example.js', 'dirname/rename.js')
 
