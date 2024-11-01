@@ -40,6 +40,14 @@ export function cpr(source: string | string[], dest: string) {
       }
     });
   } else {
-    copyFile(source, dest);
+    if (isDirectory(source)) {
+      if (isPathExist(dest)) {
+        copyDir(source, dest + '/' + source);
+      } else {
+        copyDir(source, dest);
+      }
+    } else {
+      copyFile(source, dest);
+    }
   }
 }
