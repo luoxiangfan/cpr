@@ -4,7 +4,11 @@ import { isArray, isDirectory, isFile, isPathExist, mkdir } from './util.js';
 
 function copyFile(src: string, dest: string) {
   if (isDirectory(dest)) {
-    fs.copyFileSync(src, dest + '/' + src);
+    if (isFile(src)) {
+      fs.copyFileSync(src, dest + '/' + path.basename(src));
+    } else {
+      fs.copyFileSync(src, dest + '/' + src);
+    }
   } else {
     fs.copyFileSync(src, dest);
   }
