@@ -3,29 +3,33 @@ import path from 'path';
 import { isArray, isDirectory, isFile, isPathExist, mkdir } from './util.js';
 
 function copyFile(src: string, dest: string) {
+  let destPath = dest;
   if (isDirectory(dest)) {
     if (isFile(src)) {
-      fs.copyFileSync(src, dest + '/' + path.basename(src));
+      destPath = dest + '/' + path.basename(src);
     } else {
-      fs.copyFileSync(src, dest + '/' + src);
+      destPath = dest + '/' + src;
     }
-  } else {
-    fs.copyFileSync(src, dest);
   }
+  fs.copyFileSync(src, destPath);
 }
 
 function copyDir(src: string, dest: string) {
   mkdir(dest);
-  let entries = fs.readdirSync(src, { withFileTypes: true });
-  for (let entry of entries) {
-    let srcPath = path.join(src, entry.name);
-    let destPath = path.join(dest, entry.name);
-
-    if (entry.isDirectory()) {
-      copyDir(srcPath, destPath);
-    } else {
-      fs.copyFileSync(srcPath, destPath);
+  try {
+    const files = fs.readdirSync(src, { encoding: 'utf-8' });
+    for (const file of files) {
+      let srcPath = path.join(src, file);
+      let destPath = path.join(dest, file);
+      if (isDirectory(srcPath)) {
+        copyDir(srcPath, destPath);
+      }
+      if (isFile(srcPath)) {
+        copyFile(srcPath, destPath);
+      }
     }
+  } catch (err) {
+    console.error(err);
   }
 }
 
