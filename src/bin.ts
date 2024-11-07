@@ -102,7 +102,7 @@ const main = async (...args: string[]) => {
     input: process.stdin,
     output: process.stdout
   });
-  if (srcPaths.length === 1 && isFile(srcPaths[0])) {
+  if (srcPaths.length === 1) {
     cpr(srcPaths[0], destPath);
   } else {
     cpr(srcPaths, destPath);
