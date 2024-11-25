@@ -3,7 +3,9 @@ import { createInterface } from 'readline';
 import { cpr } from './index.js';
 import { validArgs } from './constants.js';
 import { exit, isDirectory, isFile, isPathExist } from './util.js';
-import { name, version } from '../package.json';
+import packageConfig from '../package.json' with { type: 'json' };
+
+const { name, version } = packageConfig;
 
 export const help = `${name}
 Usage: ${name} [OPTION]... SOURCE... DIRECTORY
