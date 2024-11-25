@@ -1,6 +1,5 @@
 import fs from 'fs';
 import path from 'path';
-import mkdirSyncRecursive from 'mkdir-sync-recursive';
 
 export function exit(name: string) {
   console.error(`Try \`${name} --help\` for more information`);
@@ -42,12 +41,6 @@ export function isPathExist(filePath: string) {
     return fs.existsSync(filePath);
   } catch (error) {
     return false;
-  }
-}
-
-export function mkdir(filePath: string) {
-  if (!fs.existsSync(filePath)) {
-    mkdirSyncRecursive(filePath);
   }
 }
 

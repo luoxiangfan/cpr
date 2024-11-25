@@ -1,6 +1,7 @@
 import fs from 'fs';
 import path from 'path';
-import { isArray, isDirectory, isFile, isPathExist, mkdir } from './util.js';
+import { isArray, isDirectory, isFile, isPathExist } from './util.js';
+import mkdirSyncRecursive from 'mkdir-sync-recursive';
 
 function copyFile(src: string, dest: string) {
   let destPath = dest;
@@ -15,7 +16,7 @@ function copyFile(src: string, dest: string) {
 }
 
 function copyDir(src: string, dest: string) {
-  mkdir(dest);
+  mkdirSyncRecursive(dest);
   try {
     const files = fs.readdirSync(src, { encoding: 'utf-8' });
     for (const file of files) {
