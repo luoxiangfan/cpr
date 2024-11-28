@@ -43,8 +43,8 @@ const main = async (...args: string[]) => {
   destPath = files.slice(-1)[0];
   sources = files.slice(0, -1);
   if (files.length === 1) {
-    sources = files
-    destPath = ''
+    sources = files;
+    destPath = '';
   }
   if (options.length) {
     const arg = options[0];
@@ -56,7 +56,7 @@ const main = async (...args: string[]) => {
         console.log(version);
         return 0;
       } else if (arg === '--mkdirp') {
-        mkdirp = true
+        mkdirp = true;
       }
     } else {
       console.error(`${name}: unknown option: ${options[0]}`);

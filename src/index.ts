@@ -36,10 +36,10 @@ function copyDir(src: string, dest: string) {
 
 export function cpr(source: string | string[], dest: string, mkdirp?: boolean) {
   if (errorMsg(source, dest, mkdirp)) {
-    return
+    return;
   }
   if (mkdirp && !isPathExist(dest)) {
-    mkdirSyncRecursive(dest)
+    mkdirSyncRecursive(dest);
   }
   if (isArray(source)) {
     source.forEach((s) => {

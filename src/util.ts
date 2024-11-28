@@ -49,7 +49,11 @@ export function isPathExist(filePath: string) {
 
 export const isArray = Array.isArray;
 
-export function errorMsg(source: string | string[], dest: string, mkdirp?: boolean) {
+export function errorMsg(
+  source: string | string[],
+  dest: string,
+  mkdirp?: boolean
+) {
   if (!dest) {
     console.error(
       `${name}: missing destination file operand after '${source}'`
