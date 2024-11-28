@@ -2,7 +2,7 @@
 import { createInterface } from 'readline';
 import { cpr } from './index.js';
 import { validArgs } from './constants.js';
-import { exit, isDirectory, isFile, isPathExist } from './util.js';
+import { exit } from './util.js';
 import packageConfig from '../package.json' with { type: 'json' };
 
 const { name, version } = packageConfig;
@@ -15,9 +15,9 @@ Overwrite if the DEST FILE or DIRECTORY exist.
 
   -h --help            Usage information
   -v --version         output version information and exit
+  --mkdirp             make dest directory recursively if it not exist
 `;
 
-let srcPaths: string[] = [];
 let destPath: string = '';
 
 const main = async (...args: string[]) => {
@@ -26,6 +26,8 @@ const main = async (...args: string[]) => {
   const idx = _args.findIndex((arg) => arg === splitChar);
   let options: string[] = [];
   let files: string[] = [];
+  let sources: string[] = [];
+  let mkdirp = false;
   if (!_args.length || (_args.length === 1 && idx > -1)) {
     console.error(`${name}: missing file operand`);
     exit(name);
@@ -39,9 +41,11 @@ const main = async (...args: string[]) => {
     files = _args.filter((a) => !/^-/.test(a));
   }
   destPath = files.slice(-1)[0];
-  const sources = files.slice(0, -1);
-  const invalidPaths = sources.filter((f) => !isFile(f) && !isDirectory(f));
-  const lastInvalidIndex = invalidPaths.length - 1;
+  sources = files.slice(0, -1);
+  if (files.length === 1) {
+    sources = files
+    destPath = ''
+  }
   if (options.length) {
     const arg = options[0];
     if (validArgs.includes(arg)) {
@@ -51,63 +55,23 @@ const main = async (...args: string[]) => {
       } else if (arg === '-v' || arg === '--version') {
         console.log(version);
         return 0;
+      } else if (arg === '--mkdirp') {
+        mkdirp = true
       }
     } else {
       console.error(`${name}: unknown option: ${options[0]}`);
       exit(name);
     }
-  } else if (files.length === 1) {
-    console.error(
-      `${name}: missing destination file operand after '${files[0]}'`
-    );
-    exit(name);
-  } else if (files.length === 2) {
-    if (sources.length === 1) {
-      const source = sources[0];
-      const sourceExist = isPathExist(source);
-      if (sourceExist && isDirectory(source) && isFile(destPath)) {
-        console.error(
-          `${name}: cannot overwrite non-directory '${destPath}' with directory ${source}'`
-        );
-        return 1;
-      }
-      if (!sourceExist) {
-        console.error(
-          `${name}: cannot stat '${source}': No such file or directory`
-        );
-        return 1;
-      }
-    }
-  } else if (files.length > 2) {
-    if (!isDirectory(destPath)) {
-      console.error(`${name}: target '${destPath}' is not a directory`);
-      return 1;
-    } else {
-      invalidPaths.forEach((f, idx) => {
-        if (!isFile(f) && !isDirectory(f)) {
-          console.error(
-            `${name}: cannot stat '${f}': No such file or directory`
-          );
-          if (idx === lastInvalidIndex) {
-            return 1;
-          }
-        }
-      });
-    }
-  }
-
-  if (sources.every((s) => isFile(s) || isDirectory(s))) {
-    srcPaths = sources;
   }
 
   const rl = createInterface({
     input: process.stdin,
     output: process.stdout
   });
-  if (srcPaths.length === 1) {
-    cpr(srcPaths[0], destPath);
+  if (sources.length === 1) {
+    cpr(sources[0], destPath);
   } else {
-    cpr(srcPaths, destPath);
+    cpr(sources, destPath, mkdirp);
   }
 
   rl.close();

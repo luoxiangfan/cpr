@@ -1,6 +1,6 @@
 import fs from 'fs';
 import path from 'path';
-import { isArray, isDirectory, isFile, isPathExist } from './util.js';
+import { errorMsg, isArray, isDirectory, isFile, isPathExist } from './util.js';
 import mkdirSyncRecursive from 'mkdir-sync-recursive';
 
 function copyFile(src: string, dest: string) {
@@ -34,7 +34,13 @@ function copyDir(src: string, dest: string) {
   }
 }
 
-export function cpr(source: string | string[], dest: string) {
+export function cpr(source: string | string[], dest: string, mkdirp?: boolean) {
+  if (errorMsg(source, dest, mkdirp)) {
+    return
+  }
+  if (mkdirp && !isPathExist(dest)) {
+    mkdirSyncRecursive(dest)
+  }
   if (isArray(source)) {
     source.forEach((s) => {
       if (isFile(s)) {
