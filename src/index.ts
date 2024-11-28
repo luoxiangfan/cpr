@@ -5,11 +5,12 @@ import mkdirSyncRecursive from 'mkdir-sync-recursive';
 
 function copyFile(src: string, dest: string) {
   let destPath = dest;
+  const sep = path.sep
   if (isDirectory(dest)) {
     if (isFile(src)) {
-      destPath = dest + '/' + path.basename(src);
+      destPath = dest + sep + path.basename(src);
     } else {
-      destPath = dest + '/' + src;
+      destPath = dest + sep + src;
     }
   }
   fs.copyFileSync(src, destPath);
@@ -38,6 +39,7 @@ export function cpr(source: string | string[], dest: string, mkdirp?: boolean) {
   if (errorMsg(source, dest, mkdirp)) {
     return;
   }
+  const sep = path.sep
   if (mkdirp && !isPathExist(dest)) {
     mkdirSyncRecursive(dest);
   }
@@ -48,7 +50,7 @@ export function cpr(source: string | string[], dest: string, mkdirp?: boolean) {
       }
       if (isDirectory(s)) {
         if (isPathExist(dest)) {
-          copyDir(s, dest + '/' + s);
+          copyDir(s, dest + sep + s);
         } else {
           copyDir(s, dest);
         }
@@ -57,7 +59,7 @@ export function cpr(source: string | string[], dest: string, mkdirp?: boolean) {
   } else {
     if (isDirectory(source)) {
       if (isPathExist(dest)) {
-        copyDir(source, dest + '/' + source);
+        copyDir(source, dest + sep + source);
       } else {
         copyDir(source, dest);
       }
