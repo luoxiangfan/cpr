@@ -35,3 +35,4 @@ Overwrite if the DEST FILE or DIRECTORY exist.
 
   -h --help            Usage information
   -v --version         output version information and exit
+  --mkdirp             make dest directory recursively if it not exist
