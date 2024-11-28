@@ -47,6 +47,6 @@
     "unbuild": "^2.0.0"
   },
   "dependencies": {
-    "mkdir-sync-recursive": "^1.0.2"
+    "mkdir-sync-recursive": "^1.1.0"
   }
 }
