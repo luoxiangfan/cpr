@@ -67,11 +67,7 @@ const main = async (...args: string[]) => {
     input: process.stdin,
     output: process.stdout
   });
-  if (sources.length === 1) {
-    cpr(sources, dest);
-  } else {
-    cpr(sources, dest, mkdirp);
-  }
+  cpr(sources, dest, mkdirp);
 
   rl.close();
 
