@@ -1,13 +1,12 @@
 #!/usr/bin/env node
 import { createInterface } from 'readline';
 import { cpr } from './index.js';
-import { validArgs } from './constants.js';
 import { exit } from './util.js';
-import packageConfig from '../package.json' with { type: 'json' };
+import { name, version } from '../package.json';
 
-const { name, version } = packageConfig;
+const validArgs = ['-h', '-v', '--help', '--version', '--mkdirp'];
 
-export const help = `${name}
+const help = `${name}
 Usage: ${name} [OPTION]... SOURCE... DIRECTORY
 Copy Single File to DEST File.
 Copy SOURCE(s) FILE or DIRECTORY to DEST DIRECTORY.
@@ -18,7 +17,7 @@ Overwrite if the DEST FILE or DIRECTORY exist.
   --mkdirp             make dest directory recursively if it not exist
 `;
 
-let destPath: string = '';
+let dest: string = '';
 
 const main = async (...args: string[]) => {
   const _args = args.filter((i) => i.trim());
@@ -40,11 +39,11 @@ const main = async (...args: string[]) => {
     options = _args.filter((a) => /^-/.test(a));
     files = _args.filter((a) => !/^-/.test(a));
   }
-  destPath = files.slice(-1)[0];
+  dest = files.slice(-1)[0];
   sources = files.slice(0, -1);
   if (files.length === 1) {
     sources = files;
-    destPath = '';
+    dest = '';
   }
   if (options.length) {
     const arg = options[0];
@@ -69,19 +68,15 @@ const main = async (...args: string[]) => {
     output: process.stdout
   });
   if (sources.length === 1) {
-    cpr(sources[0], destPath);
+    cpr(sources, dest);
   } else {
-    cpr(sources, destPath, mkdirp);
+    cpr(sources, dest, mkdirp);
   }
 
   rl.close();
 
   return 0;
 };
-main.help = help;
-main.version = version;
-
-export default main;
 
 const args = process.argv.slice(2);
 main(...args).then(

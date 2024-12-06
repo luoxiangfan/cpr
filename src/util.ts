@@ -1,53 +1,37 @@
-import fs from 'fs';
-import path from 'path';
-import packageConfig from '../package.json' with { type: 'json' };
-
-const { name } = packageConfig;
+import { statSync, existsSync } from 'fs';
+import { resolve } from 'path';
+import { name } from '../package.json';
 
 export function exit(name: string) {
   console.error(`Try \`${name} --help\` for more information.`);
   return 1;
 }
 
-export function fileType(filePath: string) {
-  let type: 'dir' | 'file' | undefined = undefined;
-  const stat = fs.statSync(path.resolve(filePath));
-  if (stat.isDirectory()) {
-    type = 'dir';
-  }
-  if (stat.isFile()) {
-    type = 'file';
-  }
-  return type;
-}
-
-export function isFile(filePath: string) {
+export function isFile(path: string) {
   try {
-    const stat = fs.statSync(path.resolve(filePath));
+    const stat = statSync(resolve(path));
     return stat.isFile();
   } catch (error) {
     return false;
   }
 }
 
-export function isDirectory(filePath: string) {
+export function isDirectory(path: string) {
   try {
-    const stat = fs.statSync(path.resolve(filePath));
+    const stat = statSync(resolve(path));
     return stat.isDirectory();
   } catch (error) {
     return false;
   }
 }
 
-export function isPathExist(filePath: string) {
+export function isPathExist(path: string) {
   try {
-    return fs.existsSync(filePath);
+    return existsSync(path);
   } catch (error) {
     return false;
   }
 }
-
-export const isArray = Array.isArray;
 
 export function errorMsg(
   source: string | string[],
@@ -60,32 +44,32 @@ export function errorMsg(
     );
     return exit(name);
   } else if (typeof source === 'string') {
-    const sourceExist = isPathExist(source);
-    if (sourceExist && isDirectory(source) && isFile(dest)) {
+    const exist = isPathExist(source);
+    if (exist && isDirectory(source) && isFile(dest)) {
       console.error(
         `${name}: cannot overwrite non-directory '${dest}' with directory ${source}'`
       );
       return exit(name);
     }
-    if (!sourceExist) {
+    if (!exist) {
       console.error(
         `${name}: cannot stat '${source}': No such file or directory`
       );
       return exit(name);
     }
   } else {
-    const invalidPaths = source.filter((f) => !isFile(f) && !isDirectory(f));
-    const lastInvalidIndex = invalidPaths.length - 1;
+    const paths = source.filter((f) => !isFile(f) && !isDirectory(f));
+    const index = paths.length - 1;
     if (!mkdirp && !isDirectory(dest)) {
       console.error(`${name}: target '${dest}' is not a directory`);
       return exit(name);
     } else {
-      invalidPaths.forEach((f, idx) => {
-        if (!isFile(f) && !isDirectory(f)) {
+      paths.forEach((p, idx) => {
+        if (!isFile(p) && !isDirectory(p)) {
           console.error(
-            `${name}: cannot stat '${f}': No such file or directory`
+            `${name}: cannot stat '${p}': No such file or directory`
           );
-          if (idx === lastInvalidIndex) {
+          if (idx === index) {
             return 1;
           }
         }
