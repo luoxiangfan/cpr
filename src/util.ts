@@ -11,7 +11,7 @@ export function isFile(path: string) {
   try {
     const stat = statSync(resolve(path));
     return stat.isFile();
-  } catch (error) {
+  } catch {
     return false;
   }
 }
@@ -20,7 +20,7 @@ export function isDirectory(path: string) {
   try {
     const stat = statSync(resolve(path));
     return stat.isDirectory();
-  } catch (error) {
+  } catch {
     return false;
   }
 }
@@ -28,7 +28,7 @@ export function isDirectory(path: string) {
 export function isPathExist(path: string) {
   try {
     return existsSync(path);
-  } catch (error) {
+  } catch {
     return false;
   }
 }
